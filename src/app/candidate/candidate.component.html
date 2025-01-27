@@ -1,0 +1,133 @@
+  <div class="flex-column justify-content-center">
+  <div class="container mt-2 d-flex justify-content-center w-100">
+    <div class="card p-5 pb-3 w-50 text-center">
+      <div class="mb-4">
+        <mat-card appearance="outlined">
+          <mat-card-content>Enter Candidate Details</mat-card-content>
+        </mat-card>
+      </div>
+      <div class="align-self-start text-decoration-underline" [hidden]="isHid" (click)="location.reload()" style="cursor: pointer">Create New ? </div>
+      <form #candidateForm="ngForm" (ngSubmit)="saveCandidate2(candidateForm)">
+        <div>
+          <mat-form-field appearance="outline">
+            <mat-label>Candidate Id</mat-label>
+            <input matInput name="id" [(ngModel)]="candidate.id" [required]="isUpOrDel" #id="ngModel" disabled (change)="fetchCan2()" >
+            <mat-icon matSuffix>badge</mat-icon>
+            <mat-error *ngIf="id.invalid && id.touched">Id is Required</mat-error>
+          </mat-form-field>
+        </div>
+      <div class="container d-md-flex justify-content-evenly">
+        <mat-form-field appearance="outline">
+          <mat-label>First Name</mat-label>
+          <input matInput name="firstName" [(ngModel)]="candidate.firstName" required minlength="2" #firstName="ngModel">
+          <mat-icon matSuffix>badge</mat-icon>
+          <mat-error *ngIf="firstName.invalid && firstName.touched">
+            <span *ngIf="firstName.errors?.['required']">First Name is required.</span>
+            <span *ngIf="firstName.errors?.['minlength']">First Name must be at least 2 characters.</span>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Last Name</mat-label>
+          <input matInput name="lastName" [(ngModel)]="candidate.lastName">
+          <mat-icon matSuffix>badge</mat-icon>
+        </mat-form-field>
+      </div>
+      <div class="container d-md-flex justify-content-evenly">
+        <mat-form-field appearance="outline">
+          <mat-label>Age</mat-label>
+          <input matInput type="number" name="age" [(ngModel)]="candidate.age" required min="18" max="100" #age="ngModel">
+          <mat-icon matSuffix>pin</mat-icon>
+          <mat-error>
+            <span *ngIf="age.errors?.['required']">Age is required.</span>
+            <span *ngIf="age.errors?.['min']">Age must be at least 18.</span>
+            <span *ngIf="age.errors?.['max']">Age must be less than or equal to 100.</span>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>City</mat-label>
+          <input matInput name="city" [(ngModel)]="candidate.city" required #city="ngModel">
+          <mat-icon matSuffix>home</mat-icon>
+          <mat-error>
+            <span *ngIf="city.errors?.['required']">City is Required</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="container d-md-flex justify-content-evenly">
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" name="email" [(ngModel)]="candidate.email" required email #email=ngModel>
+          <mat-icon matSuffix>mail</mat-icon>
+          <mat-error *ngIf="email.invalid && email.touched">
+            <span *ngIf="email.errors?.['required']">Email is required.</span>
+            <span *ngIf="email.errors?.['email']">Please enter a valid email address.</span>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Phone</mat-label>
+          <input matInput type="tel" name="phone" [(ngModel)]="candidate.phone" required minlength="10" maxlength="10" pattern="^[0-9]*$" #phone=ngModel>
+          <mat-icon matSuffix>call</mat-icon>
+          <mat-error *ngIf="phone.invalid && phone.touched">
+            <span *ngIf="phone.errors?.['required']">Phone number is required.</span>
+            <span *ngIf="phone.errors?.['pattern']">Phone number must be numeric.</span>
+            <span *ngIf="phone.errors?.['minlength']">must be at least 10 digits.</span>
+            <span *ngIf="phone.errors?.['maxlength']">Phone number must be at most 10 digits.</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="container d-md-flex justify-content-evenly">
+        <mat-form-field appearance="outline">
+          <mat-label>Degree</mat-label>
+          <input matInput name="graduation" [(ngModel)]="candidate.graduation" required #graduation=ngModel>
+          <mat-icon matSuffix>description</mat-icon>
+          <mat-error>
+            <span *ngIf="graduation.errors?.['required']">Required</span>
+          </mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Graduation Year</mat-label>
+          <input matInput type="number" name="graduationYear" [(ngModel)]="candidate.graduationYear" required min="1900" max="2099" #graduationYear="ngModel">
+          <mat-icon matSuffix>calendar_month</mat-icon>
+          <mat-error *ngIf="graduationYear.invalid && graduationYear.touched">
+            <span *ngIf="graduationYear.errors?.['required']">Graduation Year is required.</span>
+            <span *ngIf="graduationYear.errors?.['min']">Enter a valid year.</span>
+            <span *ngIf="graduationYear.errors?.['max']">Enter a valid year.</span>
+          </mat-error>
+        </mat-form-field>
+      </div>
+      <div class="container justify-content-center align-baseline">
+        <Label>Gender: </Label>
+        <mat-radio-group name="gender" aria-label="Select an option" [(ngModel)]="candidate.gender" required #gender=ngModel>
+          <mat-radio-button name="m" (click)="selectGender('M')" value="M" [disabled]="mr">Male</mat-radio-button>
+          <mat-radio-button (click)="selectGender('F')" value="F" [disabled]="mr">Female</mat-radio-button>
+          <mat-radio-button (click)="selectGender('O')" value="O" [disabled]="mr">Other</mat-radio-button>
+        </mat-radio-group>
+        <mat-error *ngIf="gender.invalid && gender.touched">Gender is Required</mat-error>
+      </div>
+        <div class="form-group row justify-content-center align-items-center mt-2">
+          <Label class="col-form-label col-sm-2 text-end">Resume:</Label>
+          <div class="col-sm-4">
+            <button type="button" mat-fab extended (click)="resume.click()" [disabled]="!del">
+              <mat-icon>attachment</mat-icon> Select PDF </button>
+            <input id="resume" type="file" class="form-control-file" (change)="onFileSelected($event)" accept=".pdf" style="display: none" #resume required/>
+          </div>
+          <span class="mt-3" *ngIf="fileName" style="color: blue">{{fileName}}</span>
+          <mat-error *ngIf="!isPdfValid && resumeTouched" class="mt-2">Only PDF files are allowed.</mat-error>
+          <mat-error *ngIf="!fileName && resumeTouched">Resume is required.</mat-error>
+        </div>
+      <div class="container d-md-flex justify-content-evenly mt-4">
+<!--        <button mat-stroked-button name="update" [disabled]="upd" >Update</button>-->
+        <button mat-stroked-button name="save" [disabled]="sav || candidateForm.invalid || !isPdfValid">Save</button>
+      </div>
+
+      </form>
+      <div class="mt-3 d-flex justify-content-evenly">
+      <button mat-stroked-button name="update" [disabled]="upd" (click)="updateExp(candidateForm)" >Update</button>
+      <button mat-stroked-button name="delete" [disabled]="del" (click)="deleteCandid(candidate.id)">Delete</button>
+      </div>
+      </div>
+    <p-toast position="top-center" key="k1"></p-toast>
+    <mat-divider></mat-divider>
+  </div>
+  <div class="text-center w-100 mt-3 text-decoration-underline" style="cursor: pointer" (click)="updateFields(candidateForm)">Do you wanna perform UPDATE Function ?</div>
+  <div class="text-center w-100 mt-3 text-decoration-underline" style="cursor: pointer" (click)="deleteFields(candidateForm)">Do you wanna perform DELETE Function ?</div>
+  </div>

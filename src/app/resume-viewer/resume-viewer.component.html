@@ -1,0 +1,57 @@
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-12">
+      <mat-form-field appearance="outline" class="w-25 small-search">
+        <mat-label>Search<mat-icon>search</mat-icon></mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Search Candidates">
+      </mat-form-field>
+
+      <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8 striped-table">
+
+        <ng-container matColumnDef="id">
+          <th mat-header-cell *matHeaderCellDef class="fs-6" mat-sort-header>ID</th>
+          <td mat-cell *matCellDef="let candidate" class="text-center fs-6">{{ candidate.id }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="firstName">
+          <th mat-header-cell *matHeaderCellDef class=" fs-6" mat-sort-header >Name</th>
+          <td mat-cell *matCellDef="let candidate" class="text-center fs-6">{{ candidate.firstName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="lastName">
+          <th mat-header-cell *matHeaderCellDef class="fs-6" mat-sort-header>Surname</th>
+          <td mat-cell *matCellDef="let candidate" class="text-center fs-6">{{ candidate.lastName }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="age">
+          <th mat-header-cell *matHeaderCellDef class="fs-6" mat-sort-header >Age</th>
+          <td mat-cell *matCellDef="let candidate" class="text-center fs-6">{{ candidate.age }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="graduation">
+          <th mat-header-cell *matHeaderCellDef class="fs-6" mat-sort-header >Degree</th>
+          <td mat-cell *matCellDef="let candidate" class="text-center fs-6">{{ candidate.graduation }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="gender" >
+          <th mat-header-cell *matHeaderCellDef class="fs-6" mat-sort-header >Gender</th>
+          <td mat-cell *matCellDef="let candidate" class="text-center fs-6">{{ candidate.gender }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="resume">
+          <th mat-header-cell *matHeaderCellDef class="text-center fs-6">Resume</th>
+          <td mat-cell *matCellDef="let candidate" class="text-center fs-6">
+            <button mat-button class="text-primary fs-6" (click)="viewResume(candidate.resume)" *ngIf="candidate.resume">
+              View Resume
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;" class="striped-row"></tr>
+      </table>
+
+      <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+    </div>
+  </div>
+</div>

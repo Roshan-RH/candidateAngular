@@ -1,0 +1,67 @@
+
+.resume-popup {
+  text-align: center;
+}
+iframe {
+  margin-top: 1rem;
+}
+.actions {
+  margin-top: 1rem;
+}
+
+.small-search-bar {
+  width: 250px; /* Adjust the width */
+  height: 30px; /* Adjust the height */
+  margin-bottom: 15px; /* Add some spacing if needed */
+}
+
+.small-search-bar mat-label {
+  font-size: 12px; /* Adjust label size */
+}
+
+.small-search-bar input {
+  height: 20px; /* Adjust input height */
+  font-size: 14px; /* Adjust font size */
+  padding: 5px; /* Adjust padding for a compact look */
+}
+
+.striped-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.striped-table tr:nth-child(odd) {
+  background-color: #f9f9f9; /* Light gray for odd rows */
+}
+
+.striped-table tr:nth-child(even) {
+  background-color: #ffffff; /* White for even rows */
+}
+
+.striped-table th, .striped-table td {
+  border: 1px solid #ddd;
+  text-align: center;
+  vertical-align: middle;
+  padding: 10px;
+}
+
+.striped-table th{
+  background: #fde2e4;
+  border-bottom: 2px solid #f5c6c9; /* Light border to match the theme */
+}
+
+.striped-table th:hover {
+  background-color: #fbd5d8; /* Slightly darker pink on hover */
+  cursor: pointer; /* Indicate interactivity */
+}
+
+.striped-row:hover {
+  background-color: #e0f7fa; /* Highlight row on hover */
+}
+::ng-deep .mat-sort-header-container{
+  justify-content: center;
+}
+
+.striped-table th.mat-sort-header-container:hover {
+  cursor: pointer; /* Keep the pointer cursor for interactivity */
+}
