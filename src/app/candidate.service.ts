@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
-import {HttpClient, HttpHeaders} from '@angular/common/http';
+import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Candidate, canExpDto} from './candidate.model';
-import {Observable} from 'rxjs';
+import {catchError, Observable, throwError} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -46,7 +46,11 @@ export class CandidateService {
   }
 
   public saveFile(formData: FormData): Observable<any>{
-    return this.httpClient.post<any>(`${this.api}/save/exp`,formData)
+    return this.httpClient.post<any>(`${this.api}/save/exp`,formData).pipe(
+      catchError((err: HttpErrorResponse) => {
+        return throwError(err);
+      })
+    )
   }
 
   public deleteExp(canId: number){
@@ -56,4 +60,17 @@ export class CandidateService {
   public getCanExp(id: number): Observable<canExpDto>{
     return this.httpClient.get<canExpDto>(`${this.api}/canExp/${id}`)
   }
+
+  public deleteByEmail(email: string): Observable<any>{
+    return this.httpClient.delete(`${this.api}/delete/email/${email}`)
+  }
+
+  public getCanExpByMail(email: String): Observable<canExpDto>{
+    return this.httpClient.get<canExpDto>(`${this.api}/canExp/email/${email}`)
+  }
+
+  checkEmailExists(email: String): Observable<boolean> {
+    return this.httpClient.get<boolean>(`http://localhost:1710/check/email/${email}`);
+  }
+
 }

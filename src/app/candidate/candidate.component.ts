@@ -1,12 +1,10 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {Candidate, canExpDto} from '../candidate.model';
 import {NgForm} from '@angular/forms';
 import {HttpErrorResponse, HttpHeaders} from '@angular/common/http';
 import {CandidateService} from '../candidate.service';
 import {MatDialog} from '@angular/material/dialog';
 import {DialogComponent} from '../dialog/dialog.component';
-import {ToastrService} from 'ngx-toastr';
-import {ToastModule} from 'primeng/toast';
 import {MessageService} from 'primeng/api';
 
 @Component({
@@ -17,6 +15,7 @@ import {MessageService} from 'primeng/api';
   styleUrl: './candidate.component.css'
 })
 export class CandidateComponent implements OnInit{
+  @ViewChild('myModal',{static: false}) myModal!: ElementRef
   candidate: Candidate={// @ts-ignore
     id: null, firstName:'', lastName:'', age:'', city:'', email:'', gender:'', graduation:'', graduationYear:'',phone:'', resume:''
   }
@@ -33,12 +32,14 @@ sav: boolean=false;
 mr:  boolean=false;
 isUpOrDel=false;
 isPdfValid: boolean = true ;
-resumeTouched = false
+resumeTouched = false;
+fetch= false;
 
   constructor(private candidateService: CandidateService, private dialog:MatDialog, private messageService: MessageService) {
   }
   ngOnInit(): void {
   }
+
 
   onFileSelected(event: Event): void{
     const input = event.target as HTMLInputElement;
@@ -102,7 +103,8 @@ resumeTouched = false
           }).afterClosed().subscribe(() => {location.reload()})
         }, error: (err: HttpErrorResponse) => {
           console.log(err)
-          alert('err')
+          this.messageService.add({severity:'error', summary:'Error', detail:'Email already in Use !!',key:'k1', life: 3000})
+
         }
       })
     } else {
@@ -116,8 +118,11 @@ resumeTouched = false
   }
 
   updateFields(candidateForm: NgForm){
-    candidateForm.controls['id'].enable();
+    // candidateForm.controls['id'].enable();
     //candidateForm.controls['save'].disable();
+    this.messageService.add({severity:'info', summary:'Info', detail:'Enter your Email Id to Autofill the details',key:'k1', life: 3000})
+
+    this.fetch=true
     this.isUpOrDel=true
     this.upd=false
     this.del=true
@@ -135,39 +140,41 @@ resumeTouched = false
   }
 
   deleteFields(candidateForm: NgForm){
+    this.messageService.add({severity:'info', summary:'Info', detail:'Enter your Email Id to Autofill the details',key:'k1', life: 3000})
     this.isUpOrDel=true
+    this.fetch=true
     this.mr=true
     this.del=false
     this.upd=true
     this.sav=true
     this.isHid=false
-    candidateForm.controls['id'].enable();
+    // candidateForm.controls['id'].enable();
     candidateForm.controls['firstName'].disable();
     candidateForm.controls['lastName'].disable();
     candidateForm.controls['age'].disable();
-    candidateForm.controls['email'].disable();
+    candidateForm.controls['email'].enable();
     candidateForm.controls['graduation'].disable();
     candidateForm.controls['graduationYear'].disable();
     candidateForm.controls['city'].disable();
     candidateForm.controls['phone'].disable();
 
   }
-deleteCandid(canId: number){
-    if (!canId){
+deleteCandid(email: string){
+    if (!email){
       this.messageService.add({severity:'warn', summary:'Error', detail:'Please enter a Candidate ID',key:'k1', life: 3000})
     } else {
-    console.log(canId)
+    console.log(email)
   this.dialog.open(DialogComponent,{
-    data:{title:"Are you sure !!", message:`do you wanna delete Candidate ${canId} ??`}
+    data:{title:"Are you sure !!", message:`do you wanna delete Candidate ${email} ??`}
   }).afterClosed().subscribe(() => {
 
 
-  this.candidateService.deleteExp(canId).subscribe({
+  this.candidateService.deleteByEmail(email).subscribe({
     next: (res)=>{
       console.log(res)
       this.dialog.open(DialogComponent,{
         width: '20%',
-        data:{title:"Deleted !!", message:`Candidate ${canId} Deleted Successfully`}
+        data:{title:"Deleted !!", message:`Candidate ${email} Deleted Successfully`}
       }).afterClosed().subscribe(() => {location.reload()})
       //location.reload();
     },
@@ -178,6 +185,32 @@ deleteCandid(canId: number){
   })
   })}
 }
+  deleteCandidById(id: number){
+    if (!id){
+      this.messageService.add({severity:'warn', summary:'Error', detail:'Please enter a Candidate ID',key:'k1', life: 3000})
+    } else {
+      console.log(id)
+      this.dialog.open(DialogComponent,{
+        data:{title:"Are you sure !!", message:`do you wanna delete Candidate ${id} ??`}
+      }).afterClosed().subscribe(() => {
+
+
+        this.candidateService.deleteExp(id).subscribe({
+          next: (res)=>{
+            console.log(res)
+            this.dialog.open(DialogComponent,{
+              width: '20%',
+              data:{title:"Deleted !!", message:`Candidate ${id} Deleted Successfully`}
+            }).afterClosed().subscribe(() => {location.reload()})
+            //location.reload();
+          },
+          error:(err: HttpErrorResponse)=> {
+            console.log(err);
+            alert(err)
+          }
+        })
+      })}
+  }
 
 updateCandid(candidateForm: NgForm){
 this.candidateService.updateCandid(this.candidate).subscribe(
@@ -253,43 +286,60 @@ this.candidateService.updateCandid(this.candidate).subscribe(
   }
 
   fetchCan2() {
-    if (this.candidate.id) {
-      // Call the service to fetch both Candidate and Experience
-      this.candidateService.getCanExp(this.candidate.id).subscribe({
-        next: (res: canExpDto) => {
-          // Populate the form with fetched data
-          this.candidate = res.candidate;  // Fill the candidate form fields
-          this.candidate.graduation = res.experience.graduation;  // Set graduation
-          this.candidate.graduationYear = res.experience.graduationYear;
-          this.fileName = res.experience.resume;// Set graduationYear
-          console.log("Fetched candidate and experience:", res);
-        },
-        error: (err: any) => {
-          console.error("Error fetching candidate and experience:", err);
-          //alert("Candidate not found!");
-          this.messageService.add({severity:'error', summary:'Error', detail:'Candidate Not Found',key:'k1', life: 3000})
+    if (this.fetch) {
+      if (this.candidate.email) {
+        // Call the service to fetch both Candidate and Experience
+        this.candidateService.getCanExpByMail(this.candidate.email).subscribe({
+          next: (res: canExpDto) => {
+            // Populate the form with fetched data
+            this.candidate = res.candidate;  // Fill the candidate form fields
+            this.candidate.graduation = res.experience.graduation;  // Set graduation
+            this.candidate.graduationYear = res.experience.graduationYear;
+            this.fileName = res.experience.resume;// Set graduationYear
+            console.log("Fetched candidate and experience:", res);
+          },
+          error: (err: any) => {
+            console.error("Error fetching candidate and experience:", err);
+            //alert("Candidate not found!");
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Candidate Not Found',
+              key: 'k1',
+              life: 3000
+            })
 
-          this.candidate = {// @ts-ignore
-            id: null,
-            firstName: '',
-            lastName: '',
-            age: '',
-            city: '',
-            email: '',
-            gender: '',
-            graduation: '',
-            graduationYear: '',
-            phone: '',
-            resume:'',
-          };
-          this.fileName = ''
-        }
-      });
-    } else {
-      //alert("Please enter a valid Candidate ID");
-      this.messageService.add({severity:'error', summary:'Error', detail:'Please enter a Candidate ID',key:'k1', life: 3000})
+            this.candidate = {// @ts-ignore
+              id: null,
+              firstName: '',
+              lastName: '',
+              age: '',
+              city: '',
+              email: '',
+              gender: '',
+              graduation: '',
+              graduationYear: '',
+              phone: '',
+              resume: '',
+            };
+            this.fileName = ''
+          }
+        });
+      } else {
+        //alert("Please enter a valid Candidate ID");
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Please enter a Candidate ID',
+          key: 'k1',
+          life: 3000
+        })
+      }
     }
   }
+
+
+
 
   protected readonly location = location;
 }

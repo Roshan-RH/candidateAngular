@@ -97,10 +97,11 @@
             ],
             "styles": [
               "@angular/material/prebuilt-themes/rose-red.css",
+              "src/assets/boot5/css/bootstrap.min.css",
               "src/styles.css"
             ],
-            "scripts": ["node_modules/jquery/dist/jquery.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.min.js"]
+            "scripts": ["node_modules/jquery/dist/jquery.min.js", "src/assets/boot5/js/bootstrap.min.js", "src/assets/boot5/js/bootstrap.bundle.min.js"
+            ]
           }
         }
       }
