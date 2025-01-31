@@ -6,7 +6,7 @@
           <mat-card-content>Enter Candidate Details</mat-card-content>
         </mat-card>
       </div>
-      <div class="align-self-start text-decoration-underline" [hidden]="isHid" (click)="location.reload()" style="cursor: pointer">Create New ? </div>
+      <div class="align-self-start text-decoration-underline mb-2" [hidden]="isHid" (click)="location.reload()" style="cursor: pointer">Create New ? </div>
       <form #candidateForm="ngForm" (ngSubmit)="saveCandidate2(candidateForm)">
 <!--        <div>-->
 <!--          <mat-form-field appearance="outline">-->
@@ -16,7 +16,7 @@
 <!--            <mat-error *ngIf="id.invalid && id.touched">Id is Required</mat-error>-->
 <!--          </mat-form-field>-->
 <!--        </div>-->
-      <div class="container d-md-flex justify-content-evenly">
+      <div class="container d-md-flex justify-content-evenly mt-2">
         <mat-form-field appearance="outline">
           <mat-label>First Name</mat-label>
           <input matInput name="firstName" [(ngModel)]="candidate.firstName" required minlength="2" #firstName="ngModel">
